@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Hello World</title>
+        <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+        <!-- Don't use this in production: -->
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    </head>
+
+    <body style="color: black;font-family: 'Courier New', Courier, monospace;">
+        <div id="root"></div>
+        <script type="text/babel">
+            class SendEmail extends React.Component{
+                constructor(){
+                    super()
+                    this.state = {
+                        email: ""
+                    }
+                }
+
+                handlesubmit = (e) => {
+                    e.preventDefault()
+                    if(this.state.email === ""){
+                        alert("Provide an email address to proceed")
+                    }
+                    const data = {
+                        email: this.state.email
+                    }
+                    fetch("http://localhost:8080/email", {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    })
+                    .then(response => response.json())
+                    .then(res => {
+                        alert(res.message)
+                        this.setState({ email: ""})
+                    })
+                    .catch(err => {
+                        alert("something went wrong")
+                    })
+                }
+
+                render(){
+                    return(
+                        <div style={{
+                            width: 600,
+                            margin: "0 auto",
+                            marginTop: 100,
+                        }}>
+                            <h1 style={{
+                                fontSize: 50,
+                                fontWeight: 600,
+                                textAlign: "center"
+                            }}>Send an Email using Node js</h1>
+                                <form onSubmit={this.handlesubmit}>
+                                    <div style={{
+                                        display: "flex",
+                                        flexDirection: "column"
+                                    }}>
+                                    <label>Enter email</label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        placeholder="Enter recepient email"
+                                        value={this.state.email}
+                                        style={{
+                                            border: "2px solid black",
+                                            padding:"10px 20px",
+                                            borderRadius: 10,
+                                            margin: "20px 0px",
+                                            outline: "none"
+                                        }}
+                                        onChange={(e) => this.setState({ email: e.target.value })}
+                                    />
+                                    <button
+                                        type="submit"
+                                        style={{
+                                            width: 200,
+                                            padding: 10,
+                                            outline: "none",
+                                            margin: "0 auto",
+                                            border: "2px solid gold",
+                                            boxShadow: "2px 2px 3px grey",
+                                            fontSize: 16,
+                                            fontWeight: 600,
+                                            backgroundColor: "gold",
+                                        }}
+                                    >
+                                        Send
+                                    </button>
+                                    </div>
+                                </form>
+                        </div>
+                    )
+                }
+            }
+            ReactDOM.render(
+                <SendEmail />,
+                document.getElementById('root')
+            );
+
+        </script>
+    </body>
+
+</html>
